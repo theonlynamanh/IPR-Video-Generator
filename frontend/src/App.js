@@ -26,7 +26,7 @@ function App() {
     formData.append("script", script);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/upload/",
+        "http://127.0.0.1:8000/upload_content/",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -64,7 +64,7 @@ function App() {
       </div>
       <div style={{ marginBottom: "20px" }}>
         <label>Chọn file nhạc nền:</label>
-        <input type="file" accept="bgm/mp3" onChange={handleBgmChange} />
+        <input type="file" accept="audio/mp3" onChange={handleBgmChange} />
       </div>
 
       <button
