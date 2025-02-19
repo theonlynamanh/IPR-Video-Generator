@@ -3,26 +3,35 @@ import axios from "axios";
 
 function App() {
   const [images, setImages] = useState([]);
-  const [audio, setAudio] = useState(null);
+  const [bgm, setBgm] = useState(null);
   const [videoUrl, setVideoUrl] = useState("");
+  const [script, setScript] = useState("");
 
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
   };
 
-  const handleAudioChange = (e) => {
-    setAudio(e.target.files[0]);
+  const handleScriptChange = (e) => {
+    setScript(e.target.value);
+  };
+
+  const handleBgmChange = (e) => {
+    setBgm(e.target.files[0]);
   };
 
   const handleUpload = async () => {
     const formData = new FormData();
     images.forEach((img) => formData.append("images", img));
-    formData.append("audio", audio);
-
+    formData.append("bgm", bgm);
+    formData.append("script", script);
     try {
-      const response = await axios.post("http://127.0.0.1:8000/upload/", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axios.post(
+        "http://127.0.0.1:8000/upload_content/",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       setVideoUrl(response.data.video_url);
     } catch (error) {
       console.error("Upload failed:", error);
@@ -31,19 +40,43 @@ function App() {
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>Tạo Video từ Ảnh & Âm Thanh</h1>
+      <h1>Tạo Video từ Ảnh kết hợp chuyển đổi văn bản thành giọng nói</h1>
 
       <div style={{ marginBottom: "20px" }}>
         <label>Chọn ảnh:</label>
-        <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageChange}
+        />
       </div>
-
       <div style={{ marginBottom: "20px" }}>
-        <label>Chọn file âm thanh:</label>
-        <input type="file" accept="audio/mp3" onChange={handleAudioChange} />
+        <label>Nhập văn bản:</label>
+        <br />
+        <textarea
+          value={script}
+          onChange={handleScriptChange}
+          rows="4"
+          cols="50"
+          placeholder="Nhập lời thoại tại đây. Ví dụ: Câu 1. Câu 2. Câu 3."
+        />
+      </div>
+      <div style={{ marginBottom: "20px" }}>
+        <label>Chọn file nhạc nền:</label>
+        <input type="file" accept="audio/mp3" onChange={handleBgmChange} />
       </div>
 
-      <button onClick={handleUpload} style={{ padding: "10px 20px", background: "blue", color: "white", border: "none", cursor: "pointer" }}>
+      <button
+        onClick={handleUpload}
+        style={{
+          padding: "10px 20px",
+          background: "blue",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
         Tạo Video
       </button>
 
@@ -52,6 +85,7 @@ function App() {
           <h2>Video đã tạo:</h2>
           <video controls width="600">
             <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
         </div>
       )}
